@@ -18,6 +18,6 @@ $(EXE): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) $(EXE)
 
 .PHONY: $(EXE) clean install uninstall
