@@ -9,7 +9,7 @@
 
 #define UNIMPLEMENTED()
 
-#define MEMB_INITIAL_SIZE 1024
+#define MEMB_INITIAL_SIZE 64
 #define BUF_INITIAL_SIZE 256
 
 /* Since brainfuck does not have any special
