@@ -1,12 +1,14 @@
 #include "memb.h"
 
 #include <stddef.h>
+#include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
 
 bool memb_init(memb_t *memb, size_t length)
 {
-    memb->block = calloc(length, sizeof *memb->block);
+    memb->block = malloc((sizeof *memb->block) * length);
+    memset(memb->block, 0, length);
     memb->length = length;
     memb->ptr = 0;
     return memb->block != NULL;

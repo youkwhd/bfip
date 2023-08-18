@@ -2,11 +2,12 @@
 #define BFIP_MEMB_H
 
 #include <stdint.h>
+#include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 
 typedef struct memb_t {
-    int *block;
+    uint8_t *block;
     int ptr;
     size_t length;
 } memb_t;
