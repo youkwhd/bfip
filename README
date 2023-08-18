@@ -1,4 +1,33 @@
 bfip
 ====
 
-Brainfuck interpreter
+Brainfuck interpreter with REPL.
+
+1) Installation
+---------------
+
+For anyone trying to install this from windows, I haven't tested
+bfip to run in multiple OSes. Though, bfip is only configured for
+UNIX in the time being.
+
+Simply run this command:
+    
+    make
+
+You've just compiled bfip, but haven't installed it to $PATH,
+there should be a command equivalent to `make install` (haven't
+implemented yet).
+
+2) Usage
+--------
+
+    ./bfip -e [file...]
+
+Just kidding, haven't parsed any arguments yet.
+
+3) REPL Support
+---------------
+
+You said bfip has REPL, why is there no REPL available? please
+note that bfip is still on the early stage of development,
+currently there is no REPL implemented.
