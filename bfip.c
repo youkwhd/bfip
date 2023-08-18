@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "bfip.h"
 #include "buf.h"
 #include "io.h"
 #include "memb.h"
+
+/* #define BFIP_DEBUG */
 
 #define UNUSED(x) ((void) x)
 
@@ -26,7 +29,7 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    char *filename = "./examples/69.bf";
+    char *filename = "./examples/hello_world.bf";
 
     memb_t memb;
     buf_t file_content_buf;
@@ -57,43 +60,73 @@ int main(int argc, char **argv)
     /* TODO: 
      * Execute Brainfuck without buffering
      */
-    for (char *ch = file_content_buf.content; *ch; ch++) {
-        switch (*ch) {
-        case ' ':
-        case '\n':
-            UNIMPLEMENTED();
-            break;
+    bfip_execute(&memb, file_content_buf.content);
+
+    memb_cleanup(&memb);
+    buf_cleanup(&file_content_buf);
+    return 0;
+}
+
+void bfip_execute(memb_t *memb, char *bf)
+{
+    for (char *ptr = bf; *ptr; ptr++) {
+        switch (*ptr) {
         case '>':
-            memb.ptr++;
+            memb->ptr++;
             break;
         case '<':
-            memb.ptr--;
+            memb->ptr--;
+
+            if (memb->ptr <= -1) {
+                fprintf(stderr, "ERROR: memory pointer out of bounds (%d) \n", memb->ptr);
+                exit(EXIT_FAILURE);
+            }
+
             break;
         case '+':
-            memb.block[memb.ptr]++;
+            memb->block[memb->ptr]++;
             break;
         case '-':
-            memb.block[memb.ptr]--;
+            memb->block[memb->ptr]--;
             break;
         case '.':
-            fputc(memb.block[memb.ptr], stdout);
+            fputc(memb->block[memb->ptr], stdout);
             break;
         case ',':
             UNIMPLEMENTED();
             break;
         case '[':
-            UNIMPLEMENTED();
+            if (memb->block[memb->ptr] == 0) {
+                int distance = 0;
+                int skip = 0;
+
+                for (char *tmp = ptr + 1; *tmp && skip != -1; tmp++) {
+                    distance++;
+                    skip += (*tmp == '[');
+                    skip -= (*tmp == ']');
+                }
+
+                ptr += distance;
+            }
+
             break;
         case ']':
-            UNIMPLEMENTED();
+            if (memb->block[memb->ptr] != 0) {
+                int distance = 0;
+                int skip = 0;
+
+                for (char *tmp = ptr - 1; tmp != bf && skip != -1; tmp--) {
+                    distance--;
+                    skip += (*tmp == ']');
+                    skip -= (*tmp == '[');
+                }
+
+                ptr += distance;
+            }
+
             break;
         default:
-            fprintf(stderr, "ERROR: unknown token :: %d\n", *ch);
-            exit(EXIT_FAILURE);
+            break;
         }
     }
-
-    memb_cleanup(&memb);
-    buf_cleanup(&file_content_buf);
-    return 0;
 }
