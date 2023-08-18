@@ -1,5 +1,5 @@
-#ifndef BFCP_MEMB_H
-#define BFCP_MEMB_H
+#ifndef BFIP_MEMB_H
+#define BFIP_MEMB_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -14,4 +14,4 @@ typedef struct memb_t {
 bool memb_init(memb_t *memb, size_t length);
 void memb_cleanup(memb_t *memb);
 
-#endif // BFCP_MEMB_H
+#endif // BFIP_MEMB_H
