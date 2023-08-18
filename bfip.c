@@ -90,10 +90,10 @@ void bfip_execute(memb_t *memb, char *bf)
             memb->block[memb->ptr]--;
             break;
         case '.':
-            fputc(memb->block[memb->ptr], stdout);
+            putchar(memb->block[memb->ptr]);
             break;
         case ',':
-            UNIMPLEMENTED();
+            memb->block[memb->ptr] = getchar();
             break;
         case '[':
             if (memb->block[memb->ptr] == 0) {
