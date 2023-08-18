@@ -7,11 +7,18 @@ bool io_read(buf_t *buf, io_fd_t fd)
 {
     int n_bytes = 0;
 
-    while ((n_bytes = read(fd, buf->content, buf->len)) > IO_EOF) {
+    /* Worst case, the first read needs
+     * to resize
+     */
+    if (buf->ptr + BUF_GROW_SIZE >= (int) buf->len) {
+        buf_grow_size(buf);
+    }
+
+    while ((n_bytes = read(fd, buf->content + buf->ptr, BUF_GROW_SIZE)) > IO_EOF) {
         buf->ptr += n_bytes;
 
-        if (buf->ptr >= (int) buf->len) {
-            buf_grow_sizen(buf, buf->len);
+        if (buf->ptr + BUF_GROW_SIZE >= (int) buf->len) {
+            buf_grow_size(buf);
         }
     }
 
