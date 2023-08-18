@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "bfip.h"
+#include "repl.h"
 #include "buf.h"
 #include "io.h"
 #include "memb.h"
@@ -95,36 +96,56 @@ void bfip_execute(memb_t *memb, char *bf)
         case ',':
             memb->block[memb->ptr] = getchar();
             break;
-        case '[':
+        case '[': {
+            int distance = 0;
+            int skip = 0;
+
+            for (char *tmp = ptr + 1; *tmp && skip != -1; tmp++) {
+                distance++;
+                skip += (*tmp == '[');
+                skip -= (*tmp == ']');
+            }
+
+            if (skip != -1) {
+                fprintf(stderr, "ERROR: expected ], not found\n");
+                exit(EXIT_FAILURE);
+            }
+
             if (memb->block[memb->ptr] == 0) {
-                int distance = 0;
-                int skip = 0;
-
-                for (char *tmp = ptr + 1; *tmp && skip != -1; tmp++) {
-                    distance++;
-                    skip += (*tmp == '[');
-                    skip -= (*tmp == ']');
-                }
-
                 ptr += distance;
             }
 
             break;
-        case ']':
+        }
+        case ']': {
+            /* edge case when ]
+             * is in the first token
+             */
+            if (ptr == bf) {
+                goto notfound;
+            }
+
+            int distance = 0;
+            int skip = 0;
+
+            for (char *tmp = ptr - 1; tmp != bf && skip != -1; tmp--) {
+                distance--;
+                skip += (*tmp == ']');
+                skip -= (*tmp == '[');
+            }
+
+notfound:
+            if (skip != -1) {
+                fprintf(stderr, "ERROR: expected [, not found\n");
+                exit(EXIT_FAILURE);
+            }
+
             if (memb->block[memb->ptr] != 0) {
-                int distance = 0;
-                int skip = 0;
-
-                for (char *tmp = ptr - 1; tmp != bf && skip != -1; tmp--) {
-                    distance--;
-                    skip += (*tmp == ']');
-                    skip -= (*tmp == '[');
-                }
-
                 ptr += distance;
             }
 
             break;
+        }
         default:
             break;
         }
