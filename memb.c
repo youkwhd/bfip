@@ -6,9 +6,9 @@
 
 bool memb_init(memb_t *memb, size_t length)
 {
-    memb->block = malloc((sizeof *memb->block) * length);
+    memb->block = calloc(length, sizeof *memb->block);
     memb->length = length;
-    memb->ptr = -1;
+    memb->ptr = 0;
     return memb->block != NULL;
 }
 
