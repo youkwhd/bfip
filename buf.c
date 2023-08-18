@@ -27,8 +27,7 @@ void buf_grow_sizen(buf_t *buf, size_t n)
 
 void buf_grow_size(buf_t *buf)
 {
-    buf->len += BUF_GROW_SIZE;
-    buf->content = realloc(buf->content, buf->len);
+    buf_grow_sizen(buf, BUF_GROW_SIZE);
 }
 
 void buf_push_byte(buf_t *buf, char ch)
