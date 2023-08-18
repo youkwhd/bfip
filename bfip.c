@@ -76,7 +76,7 @@ int main(int argc, char **argv)
             memb.block[memb.ptr]--;
             break;
         case '.':
-            printf("%c", memb.block[memb.ptr]);
+            fputc(memb.block[memb.ptr], stdout);
             break;
         case ',':
             UNIMPLEMENTED();
