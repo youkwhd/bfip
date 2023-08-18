@@ -19,6 +19,12 @@ char buf_peek(buf_t *buf)
     return buf->content[buf->ptr];
 }
 
+void buf_grow_sizen(buf_t *buf, size_t n)
+{
+    buf->len += n;
+    buf->content = realloc(buf->content, buf->len);
+}
+
 void buf_grow_size(buf_t *buf)
 {
     buf->len += BUF_GROW_SIZE;
