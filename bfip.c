@@ -119,7 +119,7 @@ void bfip_execute(memb_t *memb, char *bf)
         }
         case ']': {
             /* edge case when ]
-             * is in the first token
+             * is the first token
              */
             if (ptr == bf) {
                 goto notfound;
