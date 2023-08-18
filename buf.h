@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#define BUF_GROW_SIZE 128
+#define BUF_GROW_SIZE 256
 
 typedef struct buf_t {
     char *content;
