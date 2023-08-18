@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define BUF_GROW_SIZE 256
+#define BUF_GROW_SIZE 128
 
 bool buf_init(buf_t *buf, size_t len)
 {
@@ -21,7 +21,8 @@ char buf_peek(buf_t *buf)
 
 void buf_grow_size(buf_t *buf)
 {
-    buf->content = realloc(buf->content, buf->len + BUF_GROW_SIZE);
+    buf->len += BUF_GROW_SIZE;
+    buf->content = realloc(buf->content, buf->len);
 }
 
 void buf_push_byte(buf_t *buf, char ch)
