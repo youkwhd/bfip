@@ -10,7 +10,7 @@ bool io_read(buf_t *buf, io_fd_t fd)
     while ((n_bytes = read(fd, buf->content, buf->len)) > IO_EOF) {
         buf->ptr += n_bytes;
 
-        if (buf->ptr >= buf->len) {
+        if (buf->ptr >= (int) buf->len) {
             buf_grow_sizen(buf, buf->len);
         }
     }
