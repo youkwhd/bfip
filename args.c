@@ -22,7 +22,7 @@ void args_parse(args_t *args, int argc, char **argv)
 {
     char *short_opts = ":e:h:";
     struct option long_opts[] = {
-        { "eval", no_argument, NULL, 'e' },
+        { "eval", required_argument, NULL, 'e' },
         { "help", no_argument, NULL, 'h' },
         { 0 }
     };
