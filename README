@@ -21,9 +21,15 @@ implemented yet).
 2) Usage
 --------
 
-    ./bfip -e [file...]
+Executing a Brainfuck program from a file:
 
-Just kidding, haven't parsed any arguments yet.
+    ./bfip file
+
+To evaluate a single script of Brainfuck:
+
+    ./bfip -e "++++++[>+++++++++>++<<-]>.+++.>--." 
+
+See bfip(1) for more information.
 
 3) REPL Support
 ---------------
