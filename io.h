@@ -12,6 +12,7 @@
 
 typedef int io_fd_t;
 
+void io_read_until_newline(buf_t *buf, FILE *fp);
 bool io_read(buf_t *buf, io_fd_t fd);
 bool io_close(io_fd_t fd);
 

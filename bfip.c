@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "bfip.h"
 #include "args.h"
@@ -38,8 +39,33 @@ int main(int argc, char **argv)
         exit(69);
     }
 
+    /* TODO:
+     * simplify main()
+     */
+
+    /* when -e script specified
+     */
     if (args.script != NULL) {
         bfip_execute(&memb, args.script);
+        return 0;
+    }
+
+    /* when user wants to use repl
+     */
+    if (args.use_repl) {
+        repl_t repl;
+        repl_init(&repl, "λ");
+
+        char *input = "";
+
+        while (strcmp(input, ".exit") != 0) {
+            input = repl_get_user_input(&repl);
+            bfip_execute(&memb, input);
+            putchar('\n');
+        }
+
+        memb_cleanup(&memb);
+        repl_cleanup(&repl);
         return 0;
     }
 

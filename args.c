@@ -79,13 +79,6 @@ void args_parse(args_t *args, int argc, char **argv)
         args->file = argv[optind];
     }
 
-    /* TODO:
-     * implement REPL
-     */
-    if (args->use_repl) {
-        args_print_usage_and_exit(argv[0], EXIT_FAILURE);
-    }
-
     if (args->file == NULL && !args->use_repl && args->script == NULL) {
         args_print_usage_and_exit(argv[0], EXIT_FAILURE);
     }

@@ -12,6 +12,11 @@ bool buf_init(buf_t *buf, size_t len)
     return buf->content != NULL;
 }
 
+void buf_reset(buf_t *buf)
+{
+    buf->ptr = -1;
+}
+
 char buf_peek(buf_t *buf)
 {
     return buf->content[buf->ptr];

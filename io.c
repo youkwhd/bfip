@@ -1,7 +1,19 @@
 #include "io.h"
 #include "buf.h"
 
+#include <stdio.h>
 #include <unistd.h>
+
+void io_read_until_newline(buf_t *buf, FILE *fp)
+{
+    char ch;
+
+    while ((ch = fgetc(fp)) != '\n') {
+        buf_push_byte(buf, ch);
+    }
+
+    buf_push_byte(buf, '\0');
+}
 
 bool io_read(buf_t *buf, io_fd_t fd)
 {
