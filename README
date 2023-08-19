@@ -23,7 +23,7 @@ implemented yet).
 
 Executing a Brainfuck program from a file:
 
-    ./bfip file
+    ./bfip examples/hello_world.bf
 
 To evaluate a single script of Brainfuck:
 
