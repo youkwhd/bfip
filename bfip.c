@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
         char *input = "";
 
-        while (strcmp(input, ".exit") != 0) {
+        while (strcmp(input, ":exit") != 0) {
             input = repl_get_user_input(&repl);
             bfip_execute(&memb, input);
             putchar('\n');
