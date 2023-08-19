@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "bfip.h"
+#include "args.h"
 #include "repl.h"
 #include "buf.h"
 #include "io.h"
@@ -27,16 +28,19 @@
  */
 int main(int argc, char **argv)
 {
-    UNUSED(argc);
-    UNUSED(argv);
-
-    char *filename = "./examples/hello_world.bf";
+    args_t args;
+    args_init(&args, argc, argv);
 
     memb_t memb;
     buf_t file_content_buf;
 
     if (!memb_init(&memb, MEMB_INITIAL_SIZE)) {
         exit(69);
+    }
+
+    if (args.script != NULL) {
+        bfip_execute(&memb, args.script);
+        return 0;
     }
 
     if (!buf_init(&file_content_buf, BUF_INITIAL_SIZE)) {
@@ -47,7 +51,7 @@ int main(int argc, char **argv)
     /* TODO: 
      * Calling io_open() like this sucks
      */
-    io_fd_t fd = io_open(filename, O_RDONLY);
+    io_fd_t fd = io_open(args.file, O_RDONLY);
 
     if (!io_read(&file_content_buf, fd)) {
         memb_cleanup(&memb);
