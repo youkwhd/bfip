@@ -15,7 +15,7 @@ Simply run this command:
     make
 
 For the time being, there is no command to install the binary.
-Building bfip form scratch shouldn't consume much time.
+Building bfip from scratch shouldn't consume much time.
 
 2) Usage
 --------
