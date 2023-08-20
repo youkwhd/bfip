@@ -16,11 +16,17 @@ char io_read_char(io_fd_t fd)
     char ch;
     read(fd, &ch, 1);
 
+    if (ch == '\n') {
+        goto ret;
+    }
+
     buf_t buf;
     buf_init(&buf, 8);
     io_read_until_newline(&buf, fd);
 
     buf_cleanup(&buf);
+
+ret:
     return ch;
 }
 
