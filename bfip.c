@@ -61,7 +61,6 @@ int main(int argc, char **argv)
         while (strcmp(input, ":exit") != 0) {
             input = repl_get_user_input(&repl);
             bfip_execute(&memb, input);
-            putchar('\n');
         }
 
         memb_cleanup(&memb);
@@ -124,7 +123,7 @@ void bfip_execute(memb_t *memb, char *bf)
             putchar(memb->block[memb->ptr]);
             break;
         case ',':
-            memb->block[memb->ptr] = getchar();
+            memb->block[memb->ptr] = io_read_char(IO_STDIN);
             break;
         case '[': {
             int distance = 0;

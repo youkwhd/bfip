@@ -16,7 +16,7 @@ char *repl_get_user_input(repl_t *repl)
 {
     printf("%s ", repl->prompt);
     buf_reset(&repl->buf);
-    io_read_until_newline(&repl->buf, stdin);
+    io_read_until_newline(&repl->buf, IO_STDIN);
     return repl->buf.content;
 }
 
