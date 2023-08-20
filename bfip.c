@@ -54,7 +54,7 @@ int main(int argc, char **argv)
      */
     if (args.use_repl) {
         repl_t repl;
-        repl_init(&repl, "λ");
+        repl_init(&repl, "bfip>");
 
         char *input = "";
 
