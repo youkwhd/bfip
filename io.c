@@ -13,15 +13,15 @@ void io_write(io_fd_t fd)
 
 char io_read_char(io_fd_t fd)
 {
-    /* since you will need to append newline
-     * read it along with char
-     *
-     * otherwise next io_read_until_newline() 
-     * will encounter \n on the first read
-     */
-    char buf[2];
-    read(fd, buf, 2);
-    return *buf;
+    char ch;
+    read(fd, &ch, 1);
+
+    buf_t buf;
+    buf_init(&buf, 8);
+    io_read_until_newline(&buf, fd);
+
+    buf_cleanup(&buf);
+    return ch;
 }
 
 void io_read_until_newline(buf_t *buf, io_fd_t fd)
@@ -34,6 +34,7 @@ void io_read_until_newline(buf_t *buf, io_fd_t fd)
         }
 
         n_bytes = read(fd, buf->content + buf->ptr, 1);
+
         if (n_bytes <= 0) {
             break;
         }
