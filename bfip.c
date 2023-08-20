@@ -15,6 +15,9 @@
 
 /* Since brainfuck does not have any special
  * keywords, it is ok to skip lexical analysis.
+ *
+ * TODO:
+ * memory debugging
  */
 int main(int argc, char **argv)
 {
