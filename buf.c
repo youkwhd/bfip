@@ -22,6 +22,11 @@ char buf_peek(buf_t *buf)
     return buf->content[buf->ptr];
 }
 
+char buf_pop(buf_t *buf)
+{
+    return buf->content[buf->ptr--];
+}
+
 void buf_grow_size(buf_t *buf)
 {
     buf->len += BUF_GROW_SIZE;
