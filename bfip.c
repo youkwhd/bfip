@@ -4,28 +4,17 @@
 
 #include "bfip.h"
 #include "args.h"
-#include "repl.h"
 #include "buf.h"
 #include "io.h"
 #include "memb.h"
 
-/* #define BFIP_DEBUG */
-
 #define UNUSED(x) ((void) x)
-
-#define UNIMPLEMENTED()
 
 #define MEMB_INITIAL_SIZE 64
 #define BUF_INITIAL_SIZE 256
 
 /* Since brainfuck does not have any special
- * keywords, I think it is ok to skip lexical
- * analysis (for now).
- * 
- * Or, does interpreted languages does not need
- * lexical analysis?
- *
- * I wanted to add comments later on.
+ * keywords, it is ok to skip lexical analysis.
  */
 int main(int argc, char **argv)
 {
@@ -47,24 +36,6 @@ int main(int argc, char **argv)
      */
     if (args.script != NULL) {
         bfip_execute(&memb, args.script);
-        return 0;
-    }
-
-    /* when user wants to use repl
-     */
-    if (args.use_repl) {
-        repl_t repl;
-        repl_init(&repl, "bfip>");
-
-        char *input = "";
-
-        while (strcmp(input, ":exit") != 0) {
-            input = repl_get_user_input(&repl);
-            bfip_execute(&memb, input);
-        }
-
-        memb_cleanup(&memb);
-        repl_cleanup(&repl);
         return 0;
     }
 

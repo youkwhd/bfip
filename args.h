@@ -6,7 +6,6 @@
 typedef struct args_t {
     char *file;
     char *script;
-    bool use_repl;
 } args_t;
 
 void args_init(args_t *args, int argc, char **argv);

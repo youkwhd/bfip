@@ -8,7 +8,7 @@
 void args_print_usage_and_exit(char *progname, int exit_status)
 {
     fprintf(stdout,
-            "Usage: %s [options ...] [-e script | file]\n"
+            "Usage: %s [options ...] -e script | file\n"
             "Brainfuck interpreter.\n"
             "\n"
             "Options:\n"
@@ -33,7 +33,6 @@ void args_parse(args_t *args, int argc, char **argv)
         switch (opt) {
         case 'e':
             args->script = optarg;
-            args->use_repl = false;
             break;
         /* When valid but missing something
          */
@@ -75,11 +74,10 @@ void args_parse(args_t *args, int argc, char **argv)
     /* see: https://www.gnu.org/software/libc/manual/html_node/Example-of-Getopt.html
      */
     if (optind < argc) {
-        args->use_repl = false;
         args->file = argv[optind];
     }
 
-    if (args->file == NULL && !args->use_repl && args->script == NULL) {
+    if (args->file == NULL && args->script == NULL) {
         args_print_usage_and_exit(argv[0], EXIT_FAILURE);
     }
 }
@@ -88,6 +86,5 @@ void args_init(args_t *args, int argc, char **argv)
 {
     args->file = NULL;
     args->script = NULL;
-    args->use_repl = true;
     args_parse(args, argc, argv);
 }
