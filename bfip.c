@@ -41,11 +41,6 @@ int main(int argc, char **argv)
         exit(69);
     }
 
-    void *debug_fn_callback = NULL;
-    if (args.debug) {
-        debug_fn_callback = bfip_debug_callback;
-    }
-
     /* TODO:
      * simplify main()
      */
@@ -53,7 +48,7 @@ int main(int argc, char **argv)
     /* when -e script specified
      */
     if (args.script != NULL) {
-        bfip_execute(&memb, args.script, debug_fn_callback);
+        bfip_execute(&memb, args.script, args.debug ? bfip_debug_callback : NULL);
         memb_cleanup(&memb);
         return 0;
     }
@@ -80,7 +75,7 @@ int main(int argc, char **argv)
     /* TODO: 
      * Execute Brainfuck without buffering
      */
-    bfip_execute(&memb, file_content_buf.content, debug_fn_callback);
+    bfip_execute(&memb, file_content_buf.content, args.debug ? bfip_debug_callback : NULL);
 
     memb_cleanup(&memb);
     buf_cleanup(&file_content_buf);
