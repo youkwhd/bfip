@@ -13,6 +13,16 @@
 #define MEMB_INITIAL_SIZE 64
 #define BUF_INITIAL_SIZE 256
 
+void bfip_debug_callback(memb_t *memb, char *bf, int ip)
+{
+    if (bf[ip] == '.') {
+        putchar('\n');
+    }
+
+    printf("[DEBUG ::] INST (%d := %c) MEMORY (%d:%d)\n", ip, bf[ip], memb->ptr, memb->block[memb->ptr]);
+    // io_read_char(IO_STDIN);
+}
+
 /* Since brainfuck does not have any special
  * keywords, it is ok to skip lexical analysis.
  *
@@ -31,6 +41,11 @@ int main(int argc, char **argv)
         exit(69);
     }
 
+    void *debug_fn_callback = NULL;
+    if (args.debug) {
+        debug_fn_callback = bfip_debug_callback;
+    }
+
     /* TODO:
      * simplify main()
      */
@@ -38,7 +53,7 @@ int main(int argc, char **argv)
     /* when -e script specified
      */
     if (args.script != NULL) {
-        bfip_execute(&memb, args.script);
+        bfip_execute(&memb, args.script, debug_fn_callback);
         memb_cleanup(&memb);
         return 0;
     }
@@ -65,7 +80,7 @@ int main(int argc, char **argv)
     /* TODO: 
      * Execute Brainfuck without buffering
      */
-    bfip_execute(&memb, file_content_buf.content);
+    bfip_execute(&memb, file_content_buf.content, debug_fn_callback);
 
     memb_cleanup(&memb);
     buf_cleanup(&file_content_buf);
@@ -126,7 +141,7 @@ int bfip_jump_distance_from_leftbr(int ip, char *bf)
     return distance;
 }
 
-void bfip_execute(memb_t *memb, char *bf)
+void bfip_execute(memb_t *memb, char *bf, void (*callback)(memb_t *memb, char *bf, int ip))
 {
     for (int ip = 0; bf[ip] != '\0'; ip++) {
         switch (bf[ip]) {
@@ -170,6 +185,10 @@ void bfip_execute(memb_t *memb, char *bf)
         }
         default:
             break;
+        }
+
+        if (callback != NULL) {
+            callback(memb, bf, ip);
         }
     }
 }

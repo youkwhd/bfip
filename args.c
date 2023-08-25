@@ -13,6 +13,7 @@ void args_print_usage_and_exit(char *progname, int exit_status)
             "\n"
             "Options:\n"
             "   -e script, --eval script    evaluates the given script.\n"
+            "   -d, --debug                 turn on memory debugging\n",
             "   -h, --help                  prints this message and exit.\n",
             progname);
     exit(exit_status);
@@ -20,9 +21,10 @@ void args_print_usage_and_exit(char *progname, int exit_status)
 
 void args_parse(args_t *args, int argc, char **argv)
 {
-    char *short_opts = ":e:h:";
+    char *short_opts = ":e:dh:";
     struct option long_opts[] = {
         { "eval", required_argument, NULL, 'e' },
+        { "debug", no_argument, NULL, 'd' },
         { "help", no_argument, NULL, 'h' },
         { 0 }
     };
@@ -33,6 +35,9 @@ void args_parse(args_t *args, int argc, char **argv)
         switch (opt) {
         case 'e':
             args->script = optarg;
+            break;
+        case 'd':
+            args->debug = true;
             break;
         /* When valid but missing something
          */
@@ -86,5 +91,6 @@ void args_init(args_t *args, int argc, char **argv)
 {
     args->file = NULL;
     args->script = NULL;
+    args->debug = false;
     args_parse(args, argc, argv);
 }
