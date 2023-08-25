@@ -122,7 +122,7 @@ int bfip_jump_distance_from_leftbr(int ip, char *bf)
     int distance = 0;
     int skip = 0;
 
-    for (int tmp = ip + 1; bf[ip] != '\0' && skip != -1; tmp++) {
+    for (int tmp = ip + 1; bf[tmp] != '\0' && skip != -1; tmp++) {
         distance++;
         skip += (bf[tmp] == '[');
         skip -= (bf[tmp] == ']');
@@ -165,15 +165,19 @@ void bfip_execute(memb_t *memb, char *bf, void (*callback)(memb_t *memb, char *b
             memb->block[memb->ptr] = io_read_char(IO_STDIN);
             break;
         case '[': {
+            int distance = bfip_jump_distance_from_leftbr(ip, bf);
+
             if (memb->block[memb->ptr] == 0) {
-                ip += bfip_jump_distance_from_leftbr(ip, bf);
+                ip += distance;
             }
 
             break;
         }
         case ']': {
+            int distance = bfip_jump_distance_from_rightbr(ip, bf);
+
             if (memb->block[memb->ptr] != 0) {
-                ip += bfip_jump_distance_from_rightbr(ip, bf);
+                ip += distance;
             }
 
             break;
