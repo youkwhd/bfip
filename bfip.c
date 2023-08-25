@@ -71,10 +71,64 @@ int main(int argc, char **argv)
     return 0;
 }
 
+int bfip_jump_distance_from_rightbr(int ip, char *bf)
+{
+    if (bf[ip] != ']') {
+        /* TODO:
+         * actual error message
+         */
+        fprintf(stderr, "ERROR: logic err");
+        exit(EXIT_FAILURE);
+    }
+
+    int distance = 0;
+    int skip = 0;
+
+    for (int tmp = ip - 1; tmp >= 0 && skip != -1; tmp--) {
+        distance--;
+        skip += (bf[tmp] == ']');
+        skip -= (bf[tmp] == '[');
+    }
+
+    if (skip != -1) {
+        fprintf(stderr, "ERROR: expected [, not found\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return distance;
+}
+
+int bfip_jump_distance_from_leftbr(int ip, char *bf)
+{
+    if (bf[ip] != '[') {
+        /* TODO:
+         * actual error message
+         */
+        fprintf(stderr, "ERROR: logic err");
+        exit(EXIT_FAILURE);
+    }
+
+    int distance = 0;
+    int skip = 0;
+
+    for (int tmp = ip + 1; bf[ip] != '\0' && skip != -1; tmp++) {
+        distance++;
+        skip += (bf[tmp] == '[');
+        skip -= (bf[tmp] == ']');
+    }
+
+    if (skip != -1) {
+        fprintf(stderr, "ERROR: expected ], not found\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return distance;
+}
+
 void bfip_execute(memb_t *memb, char *bf)
 {
-    for (char *ptr = bf; *ptr; ptr++) {
-        switch (*ptr) {
+    for (int ip = 0; bf[ip] != '\0'; ip++) {
+        switch (bf[ip]) {
         case '>':
             memb->ptr++;
             break;
@@ -100,51 +154,15 @@ void bfip_execute(memb_t *memb, char *bf)
             memb->block[memb->ptr] = io_read_char(IO_STDIN);
             break;
         case '[': {
-            int distance = 0;
-            int skip = 0;
-
-            for (char *tmp = ptr + 1; *tmp && skip != -1; tmp++) {
-                distance++;
-                skip += (*tmp == '[');
-                skip -= (*tmp == ']');
-            }
-
-            if (skip != -1) {
-                fprintf(stderr, "ERROR: expected ], not found\n");
-                exit(EXIT_FAILURE);
-            }
-
             if (memb->block[memb->ptr] == 0) {
-                ptr += distance;
+                ip += bfip_jump_distance_from_leftbr(ip, bf);
             }
 
             break;
         }
         case ']': {
-            /* edge case when ]
-             * is the first token
-             */
-            if (ptr == bf) {
-                goto notfound;
-            }
-
-            int distance = 0;
-            int skip = 0;
-
-            for (char *tmp = ptr - 1; tmp != bf && skip != -1; tmp--) {
-                distance--;
-                skip += (*tmp == ']');
-                skip -= (*tmp == '[');
-            }
-
-notfound:
-            if (skip != -1) {
-                fprintf(stderr, "ERROR: expected [, not found\n");
-                exit(EXIT_FAILURE);
-            }
-
             if (memb->block[memb->ptr] != 0) {
-                ptr += distance;
+                ip += bfip_jump_distance_from_rightbr(ip, bf);
             }
 
             break;
