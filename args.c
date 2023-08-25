@@ -13,7 +13,7 @@ void args_print_usage_and_exit(char *progname, int exit_status)
             "\n"
             "Options:\n"
             "   -e script, --eval script    evaluates the given script.\n"
-            "   -d, --debug                 turn on memory debugging\n",
+            "   -d, --debug                 turn on memory debugging\n"
             "   -h, --help                  prints this message and exit.\n",
             progname);
     exit(exit_status);
