@@ -39,6 +39,7 @@ int main(int argc, char **argv)
      */
     if (args.script != NULL) {
         bfip_execute(&memb, args.script);
+        memb_cleanup(&memb);
         return 0;
     }
 
