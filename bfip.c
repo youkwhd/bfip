@@ -45,7 +45,7 @@ int main(int argc, char **argv)
      * simplify main()
      */
 
-    /* when -e script specified
+    /* flag -e specified
      */
     if (args.script != NULL) {
         bfip_execute(&memb, args.script, args.debug ? bfip_debug_callback : NULL);
