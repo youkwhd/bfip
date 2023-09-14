@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     buf_t file_content_buf;
 
     if (!memb_init(&memb, MEMB_INITIAL_SIZE)) {
-        exit(69);
+        exit(5);
     }
 
     /* TODO:
@@ -50,12 +50,12 @@ int main(int argc, char **argv)
     if (args.script != NULL) {
         bfip_execute(&memb, args.script, args.debug ? bfip_debug_callback : NULL);
         memb_cleanup(&memb);
-        return 0;
+        exit(EXIT_SUCCESS);
     }
 
     if (!buf_init(&file_content_buf, BUF_INITIAL_SIZE)) {
         memb_cleanup(&memb);
-        exit(96);
+        exit(2);
     }
 
     /* TODO: 
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         memb_cleanup(&memb);
         buf_cleanup(&file_content_buf);
         io_close(fd);
-        exit(17);
+        exit(3);
     }
 
     io_close(fd);
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
     memb_cleanup(&memb);
     buf_cleanup(&file_content_buf);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int bfip_jump_distance_from_rightbr(int ip, char *bf)
