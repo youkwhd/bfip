@@ -13,7 +13,9 @@ void args_print_usage_and_exit(char *progname, int exit_status)
             "\n"
             "Options:\n"
             "   -e script, --eval script    evaluates the given script.\n"
-            "   -d, --debug                 turn on memory debugging\n"
+            "   -d, --debug                 turn on memory debugging.\n"
+            "   -s, --step                  step execution one at a time,\n"
+            "                               only possible when -d is passed.\n"
             "   -h, --help                  prints this message and exit.\n",
             progname);
     exit(exit_status);
@@ -21,10 +23,11 @@ void args_print_usage_and_exit(char *progname, int exit_status)
 
 void args_parse(args_t *args, int argc, char **argv)
 {
-    char *short_opts = ":e:dh:";
+    char *short_opts = ":e:dsh:";
     struct option long_opts[] = {
         { "eval", required_argument, NULL, 'e' },
         { "debug", no_argument, NULL, 'd' },
+        { "step", no_argument, NULL, 's' },
         { "help", no_argument, NULL, 'h' },
         { 0 }
     };
@@ -38,6 +41,9 @@ void args_parse(args_t *args, int argc, char **argv)
             break;
         case 'd':
             args->debug = true;
+            break;
+        case 's':
+            args->step = true;
             break;
         /* When valid but missing something
          */
@@ -76,6 +82,11 @@ void args_parse(args_t *args, int argc, char **argv)
         }
     }
 
+    if (args->step && !args->debug) {
+        fprintf(stderr, "%s: step debugging only works if -d is also passed\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
     /* see: https://www.gnu.org/software/libc/manual/html_node/Example-of-Getopt.html
      */
     if (optind < argc) {
@@ -89,8 +100,10 @@ void args_parse(args_t *args, int argc, char **argv)
 
 void args_init(args_t *args, int argc, char **argv)
 {
-    args->file = NULL;
+    args->file   = NULL;
     args->script = NULL;
-    args->debug = false;
+    args->step   = false;
+    args->debug  = false;
+
     args_parse(args, argc, argv);
 }

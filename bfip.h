@@ -3,6 +3,6 @@
 
 #include "memb.h"
 
-void bfip_execute(memb_t *memb, char *bf, void (*callback)(memb_t *memb, char *bf, int ip));
+void bfip_execute(memb_t *memb, char *program, void (*callback_fn_before)(memb_t *memb, char *program, int ip), void (*callback_fn_after)(memb_t *memb, char *program, int ip));
 
 #endif // BFIP_BFIP_H

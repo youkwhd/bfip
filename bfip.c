@@ -13,21 +13,30 @@
 #define MEMB_INITIAL_SIZE 64
 #define BUF_INITIAL_SIZE 256
 
-void bfip_debug_callback(memb_t *memb, char *bf, int ip)
+void bfip_debug_callback_before(memb_t *memb, char *program, int ip)
 {
-    if (bf[ip] == '.') {
+    printf("[DEBUG ::] INST (%d := %c) MEMORY (%d := %d)\n", ip, program[ip], memb->ptr, memb->block[memb->ptr]);
+}
+
+void bfip_debug_callback_after(memb_t *memb, char *program, int ip)
+{
+    UNUSED(memb);
+
+    if (program[ip] == '.') {
         putchar('\n');
     }
-
-    printf("[DEBUG ::] INST (%d := %c) MEMORY (%d:%d)\n", ip, bf[ip], memb->ptr, memb->block[memb->ptr]);
-    // io_read_char(IO_STDIN);
 }
+
+void bfip_debug_callback_with_step_before(memb_t *memb, char *program, int ip)
+{
+    printf("[DEBUG ::] INST (%d := %c) MEMORY (%d:%d)", ip, program[ip], memb->ptr, memb->block[memb->ptr]);
+    getchar();
+}
+
+#define bfip_debug_callback_with_step_after bfip_debug_callback_after
 
 /* Since brainfuck does not have any special
  * keywords, it is ok to skip lexical analysis.
- *
- * TODO:
- * memory debugging
  */
 int main(int argc, char **argv)
 {
@@ -41,14 +50,22 @@ int main(int argc, char **argv)
         exit(5);
     }
 
-    /* TODO:
-     * simplify main()
-     */
+    void *callback_fn_before = NULL;
+    void *callback_fn_after = NULL;
+
+    if (args.debug && args.step) {
+        callback_fn_before = bfip_debug_callback_with_step_before;
+        callback_fn_after = bfip_debug_callback_with_step_after;
+    } else if (args.debug) {
+        callback_fn_before = bfip_debug_callback_before;
+        callback_fn_after = bfip_debug_callback_after;
+    } 
 
     /* flag -e specified
      */
     if (args.script != NULL) {
-        bfip_execute(&memb, args.script, args.debug ? bfip_debug_callback : NULL);
+
+        bfip_execute(&memb, args.script, callback_fn_before, callback_fn_after);
         memb_cleanup(&memb);
         exit(EXIT_SUCCESS);
     }
@@ -75,16 +92,16 @@ int main(int argc, char **argv)
     /* TODO: 
      * Execute Brainfuck without buffering
      */
-    bfip_execute(&memb, file_content_buf.content, args.debug ? bfip_debug_callback : NULL);
+    bfip_execute(&memb, file_content_buf.content, callback_fn_before, callback_fn_after);
 
     memb_cleanup(&memb);
     buf_cleanup(&file_content_buf);
     return EXIT_SUCCESS;
 }
 
-int bfip_jump_distance_from_rightbr(int ip, char *bf)
+int bfip_jump_distance_from_rightbr(int ip, char *program)
 {
-    if (bf[ip] != ']') {
+    if (program[ip] != ']') {
         /* TODO:
          * actual error message
          */
@@ -97,8 +114,8 @@ int bfip_jump_distance_from_rightbr(int ip, char *bf)
 
     for (int tmp = ip - 1; tmp >= 0 && skip != -1; tmp--) {
         distance--;
-        skip += (bf[tmp] == ']');
-        skip -= (bf[tmp] == '[');
+        skip += (program[tmp] == ']');
+        skip -= (program[tmp] == '[');
     }
 
     if (skip != -1) {
@@ -109,9 +126,9 @@ int bfip_jump_distance_from_rightbr(int ip, char *bf)
     return distance;
 }
 
-int bfip_jump_distance_from_leftbr(int ip, char *bf)
+int bfip_jump_distance_from_leftbr(int ip, char *program)
 {
-    if (bf[ip] != '[') {
+    if (program[ip] != '[') {
         /* TODO:
          * actual error message
          */
@@ -122,10 +139,10 @@ int bfip_jump_distance_from_leftbr(int ip, char *bf)
     int distance = 0;
     int skip = 0;
 
-    for (int tmp = ip + 1; bf[tmp] != '\0' && skip != -1; tmp++) {
+    for (int tmp = ip + 1; program[tmp] != '\0' && skip != -1; tmp++) {
         distance++;
-        skip += (bf[tmp] == '[');
-        skip -= (bf[tmp] == ']');
+        skip += (program[tmp] == '[');
+        skip -= (program[tmp] == ']');
     }
 
     if (skip != -1) {
@@ -136,10 +153,14 @@ int bfip_jump_distance_from_leftbr(int ip, char *bf)
     return distance;
 }
 
-void bfip_execute(memb_t *memb, char *bf, void (*callback)(memb_t *memb, char *bf, int ip))
+void bfip_execute(memb_t *memb, char *program, void (*callback_fn_before)(memb_t *memb, char *program, int ip), void (*callback_fn_after)(memb_t *memb, char *program, int ip))
 {
-    for (int ip = 0; bf[ip] != '\0'; ip++) {
-        switch (bf[ip]) {
+    for (int ip = 0; program[ip] != '\0'; ip++) {
+        if (callback_fn_before != NULL && program[ip] != ' ' && program[ip] != '\n') {
+            callback_fn_before(memb, program, ip);
+        }
+
+        switch (program[ip]) {
         case '>':
             memb->ptr++;
             break;
@@ -165,7 +186,7 @@ void bfip_execute(memb_t *memb, char *bf, void (*callback)(memb_t *memb, char *b
             memb->block[memb->ptr] = io_read_char(IO_STDIN);
             break;
         case '[': {
-            int distance = bfip_jump_distance_from_leftbr(ip, bf);
+            int distance = bfip_jump_distance_from_leftbr(ip, program);
 
             if (memb->block[memb->ptr] == 0) {
                 ip += distance;
@@ -174,7 +195,7 @@ void bfip_execute(memb_t *memb, char *bf, void (*callback)(memb_t *memb, char *b
             break;
         }
         case ']': {
-            int distance = bfip_jump_distance_from_rightbr(ip, bf);
+            int distance = bfip_jump_distance_from_rightbr(ip, program);
 
             if (memb->block[memb->ptr] != 0) {
                 ip += distance;
@@ -186,8 +207,8 @@ void bfip_execute(memb_t *memb, char *bf, void (*callback)(memb_t *memb, char *b
             break;
         }
 
-        if (callback != NULL) {
-            callback(memb, bf, ip);
+        if (callback_fn_after != NULL && program[ip] != ' ' && program[ip] != '\n') {
+            callback_fn_after(memb, program, ip);
         }
     }
 }
