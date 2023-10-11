@@ -64,7 +64,6 @@ int main(int argc, char **argv)
     /* flag -e specified
      */
     if (args.script != NULL) {
-
         bfip_execute(&memb, args.script, callback_fn_before, callback_fn_after);
         memb_cleanup(&memb);
         exit(EXIT_SUCCESS);
