@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -111,10 +112,9 @@ int bfip_jump_distance_from_rightbr(int ip, char *program)
     int distance = 0;
     int skip = 0;
 
-    for (int tmp = ip - 1; tmp >= 0 && skip != -1; tmp--) {
-        distance--;
-        skip += (program[tmp] == ']');
-        skip -= (program[tmp] == '[');
+    for (int tmp = ip - 1; tmp >= 0 && skip != -1; tmp--, distance--) {
+        skip += (uint8_t)(program[tmp] == ']');
+        skip -= (uint8_t)(program[tmp] == '[');
     }
 
     if (skip != -1) {
@@ -138,10 +138,9 @@ int bfip_jump_distance_from_leftbr(int ip, char *program)
     int distance = 0;
     int skip = 0;
 
-    for (int tmp = ip + 1; program[tmp] != '\0' && skip != -1; tmp++) {
-        distance++;
-        skip += (program[tmp] == '[');
-        skip -= (program[tmp] == ']');
+    for (int tmp = ip + 1; program[tmp] != '\0' && skip != -1; tmp++, distance++) {
+        skip += (uint8_t)(program[tmp] == '[');
+        skip -= (uint8_t)(program[tmp] == ']');
     }
 
     if (skip != -1) {
